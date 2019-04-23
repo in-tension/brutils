@@ -1,13 +1,21 @@
-""" brutils -> brown utils -> amelia brown utils """
+"""
+Amelia **Br**\ own **Util**\ ities
+
+"""
+# brutils -> brown utils -> amelia brown utils
 
 import os
 import csv
 import time
 import pathlib
+import math
+import sys
+import datetime
 
 import numpy as np
 import xlsxwriter
 
+from .brutils_dep import  *
 
 
 
@@ -19,110 +27,100 @@ def one_value(some_dict) :
     for value in some_dict.values() :
         return value
 
-
-def col_dict_to_cols(col_dict) :
-    cols = []
-    for key in col_dict.keys() :
-        cols.append(col_dict[key])
-    return cols
-
-def col_dict_to_rows(col_dict) :
-    # cols = []
-    # for key in col_dict.keys() :
-    #     cols.append(col_dict[key])
-    cols = col_dict_to_cols(col_dict)
-    rows = ap.ap_utils.rotate(cols)
-    return rows
+from termcolor import colored
+def create_df_dists(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None) :
+    """ adds column to original df """
+    ct = dtic('create_df_dists')
+    if dist_col_name in df.columns :
+        pass
+    else :
+        df[dist_col_name]=np.nan
 
 
+    dt = dtic('create_df_dists for loop')
+    for r in range(0,len(df)-1) :
 
-## <arrs_spreadsheets_io>
-def csv_to_rows(csv_path) :
-    """
-    """
-    rows = []
-    with open(csv_path,'rU') as csv_file :
-        csv_reader = csv.reader(csv_file)
-        for row in csv_reader :
-            rows.append(row)
+        one = df.iloc[r]
+        two = df.iloc[r+1]
 
-    return rows
+        if one[index_col] == two[index_col] - 1 :
+            df[dist_col_name].iloc[r] = distance([one[x_col_name],one[y_col_name]],[two[x_col_name],two[y_col_name]])
+    dtoc(dt)
+    print(df[dist_col_name])
 
-def csv_to_dict(csv_path) :
-    """
-        reads a csv file and creates a dict of rows
-        assumes first row is col names and that all are unique
-    """
-    rows = csv_to_rows(csv_path)
-    cols = rotate(rows)
+    dtoc(ct)
 
-    col_dict = {}
-    for col in cols :
-        col_dict[col[0]] = col[1:]
+def loc_print() :
+    # print(locals().keys())
+    # print(globals().keys())
+    import inspect
+    # print(inspect.getframeinfo(inspect.currentframe().f_back).function)
+    cur_frame = inspect.currentframe()
+    prev_frame = cur_frame.f_back
+    prev_frame_info = inspect.getframeinfo(prev_frame).function
+    print(inspect.getframeinfo(cur_frame).function)
+    print(prev_frame_info)
+    print(__name__)
+    print(__package__)
 
-    return col_dict
+# global count
+# count = 0
 
-def rows_to_csv(rows, csv_path) :
-    """
-        writes a 2D list of rows to a csv
-    """
-    with open(csv_path, 'w', newline='') as csv_file :
-        csv_writer = csv.writer(csv_file)
-        for row in rows :
-            csv_writer.writerow(row)
+def create_df_dists2(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None) :
+    """ adds column to original df """
+    # global count
+    # count+=1
 
-def col_dict_to_csv(col_dict, csv_path) :
-    """
-        writes a dict of columns to a csv
-    """
-    cols = []
-    for col_key in col_dict :
-        temp_col = [col_key] + col_dict[col_key]
-        cols.append(temp_col)
-    rows = rotate(cols)
-    rows_to_csv(rows, csv_path)
 
-def col_dict_to_sheet(col_dict, w_sheet, col_num=0) :
-    """
-    """
-    # col_num = 0
-    for key in col_dict :
-        if(type(key) == tuple) :
-            key_str = tuple_to_str(key)
-        elif(type(key) == str) :
-            key_str = key
+
+    # if count == 1 :
+    #     print(df[[index_col,x_col_name,y_col_name,dist_col_name]])
+
+    if dist_col_name in df.columns:
+        pass
+    else:
+        df[dist_col_name] = np.nan
+
+    c = 0
+    ct = 0
+    cf = 0
+
+
+
+    for n in range(len(df.index)-1) :
+        c+=1
+        r = df.index[n]
+        r2 = df.index[n+1]
+
+        if df.loc[r, index_col] == df.loc[r2, index_col] - 1 :
+            ct+=1
+
+            df.loc[r, dist_col_name] = (distance([df.loc[r, x_col_name], df.loc[r, y_col_name]], [df.loc[r2, x_col_name]    , df.loc[r2, y_col_name]]))
         else :
-            key_str = str(key)
+            cf+=1
 
 
+    #
+    # if count == 1:
+    #     print(df[[index_col, x_col_name, y_col_name, dist_col_name]])
 
-        w_sheet.write_string(0, col_num, key_str)
-        w_sheet.write_column(1, col_num, col_dict[key])
-
-        col_num += 1
-    return col_num
-
-
-def col_dict_to_xlsx(out_file, col_dict, col_num=0) :
-    with xlsxwriter.Workbook(out_file, {'nan_inf_to_errors': True}) as w_book :
-        w_sheet = w_book.add_worksheet('')
-        col_dict_to_sheet(col_dict, w_sheet)
-## </arrs_spreadsheets_io>
+    return df
 
 
-
+def distance(p0, p1):
+    """ p0 = [x0, y0], p1 = [x1, y1]"""
+    return math.sqrt((p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2)
 
 def read_plate_map(pm_file_path) :
     """
-        assumes rows go from B-P, and cols from 2-24
+    assumes rows go from B-P, and cols from 2-24
 
-        return table_types, well_dicts, condit_dict
-        conditi_dict -> key = tuple representing condit
-                        value = list of well names
-        table_types describes the meaning of each element in condit tuples
-
-
+    return table_types, well_dicts, condit_dict
+    conditi_dict -> key = tuple representing condit
+    value = list of well names
+    table_types describes the meaning of each element in condit tuples
     """
+
     pm_rows = csv_to_rows(pm_file_path)
 
     row_ranges = []
@@ -357,12 +355,16 @@ def arr_np_nan(arr, blank=None) :
 
 
 def col_dict_np_nan(col_dict, blank=None) :
-    """ replaces blank values in cols of col_dict with np.nan """
+    """
+    deprecated - use pandas
+    replaces blank values in cols of col_dict with np.nan
+    """
     for col_name in col_dict :
         arr_np_nan(col_dict[col_name],blank=blank)
 
 def col_dict_row_nanmed(col_dict) :
     """
+        deprecated - use pandas
         .. note: asumes col_dict is rec
     """
     col_dict_np_nan(col_dict)
@@ -384,6 +386,7 @@ def col_dict_row_nanmed(col_dict) :
 
 def col_dict_row_nanmean(col_dict) :
     """
+        deprecated - use pandas
         .. note: asumes col_dict is rec
     """
 
@@ -442,30 +445,59 @@ def tuple_to_str(tup, delim='_') :
 ## <tic_toc>
 def tic() :
     """
+        | tic-toc used to measure elapsed time (usage similar to matlab tic-toc)
+
+        | basic tic, returns current time
+        | when results of tic are given to a later toc, toc returns the elapsed time
+
     """
     return time.time()
 
 def toc(start_time) :
     """
+        | tic-toc used to measure elapsed time (usage similar to matlab tic-toc)
+
+        | *returns* time in seconds since given ``tic``
+
+        | start_time -> ``tic``
     """
     end_time = time.time()
     return (end_time-start_time)
 
-def toc2(start_time, descrip='') :
+## ptoc -> print_toc
+def ptoc(start_time, descrip=None) :
     """
+        *prints* time in seconds since given ``tic``
+
+        | start_time -> ``tic``
     """
     elapsed_time = toc(start_time)
-    print('{} : {} seconds'.format(descrip, elapsed_time))
+    if descrip == None :
+        print('time elapsed {} seconds'.format(elapsed_time))
+    else :
+        #print('{} seconds'.format(descrip, elapsed_time))
+        dtoc([start_time])
 
-## ptoc = print_toc
-def ptic(descrip) :
+## dtic -> described_tic
+def dtic(descrip) :
     """
-    """
-    return [descrip,time.time()]
+        | like tic but takes a description of what is being timed
+        | ``dtoc`` prints given description with the elapsed time
 
-def ptoc(descrip_n_time) :
+        | useful to identify what different times represent in output
     """
+    return [time.time(),descrip]
+
+## dtoc -> described_toc
+def dtoc(descrip_n_time) :
     """
-    elapsed_time = time.time() - descrip_n_time[1]
-    print('{} : {:.2f} seconds'.format(descrip_n_time[0], elapsed_time))
+        prints elapsed time since given ``dtic``
+
+        | descrip_n_time -> ``dtoc`` -> [start_time, descrip]
+    """
+    elapsed_time = time.time() - descrip_n_time[0]
+    time_str = str(datetime.timedelta(seconds=elapsed_time))
+    print('{} : {}'.format(descrip_n_time[1], int(elapsed_time)))
+
+    # print('{} : {:.2f} seconds'.format(descrip_n_time[1], elapsed_time))
 ## </tic_toc>
