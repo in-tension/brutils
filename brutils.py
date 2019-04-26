@@ -2,7 +2,7 @@
 Amelia **Br**\ own **Util**\ ities
 
 """
-# brutils -> brown utils -> amelia brown utils
+# brutils -> (amelia) brown utilities
 
 import os
 import csv
@@ -11,13 +11,20 @@ import pathlib
 import math
 import sys
 import datetime
+import importlib as imp
+
 
 import numpy as np
 import xlsxwriter
 
 from .brutils_dep import  *
 
-
+def reload(package) :
+    for key, val in package.__dict__.items():
+        if type(val) == type(os) :
+            imp.reload(val)
+        print(key)
+    imp.reload(package)
 
 def one_key(some_dict) :
     for key in some_dict :
@@ -108,7 +115,10 @@ def create_df_dists2(df, x_col_name, y_col_name, dist_col_name="Distance", index
 
 
 def distance(p0, p1):
-    """ p0 = [x0, y0], p1 = [x1, y1]"""
+    """
+    | p0 = [x0, y0], p1 = [x1, y1]
+    | calculates distance between p0 and p1
+    """
     return math.sqrt((p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2)
 
 def read_plate_map(pm_file_path) :
