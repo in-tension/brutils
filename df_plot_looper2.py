@@ -59,6 +59,8 @@ class DfPlotLooper2 :
         self.b_next.on_clicked(self.next)
         self.b_prev.on_clicked(self.prev)
 
+        self.b_next.set_visible(False)
+
         try :
             matplotlib.rcParams['keymap.back'].remove('left')
             matplotlib.rcParams['keymap.forward'].remove('right')
@@ -72,7 +74,7 @@ class DfPlotLooper2 :
                     # comment out if using -i
 
     # def sub_class_init(self) :
-    #     pass
+    #     pass]
     def plot(self) :
         ax = plt.gca()
         ax.cla()

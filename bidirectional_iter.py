@@ -71,15 +71,18 @@ class PlotLooper3 :
 
 
     def plot(self) :
-        ax = plt.gca()
-        ax.cla()
+    #     ax = plt.gca()
+    #     ax.cla()
         if self.plot_func == None :
-            self.cur_group.plot(ax,self.fig)
+            print("plot_func = None")
+            self.cur_group.plot(self.fig)
         else :
+            print("have plot_func")
             p = self.plot_func
-            self.cur_group.p(ax)
+            self.cur_group.p(plt.gca())
         plt.draw()
 
+        self.fig.canvas.mpl_connect("key_press_event", self.on_key_press)
 
     def next(self, direct=1) :
         self.cur_group = self.data_group_iter.next(direct)
@@ -117,12 +120,12 @@ class PlotLooper3 :
         self.fig.show()
 
 
-        self.ax_prev = plt.axes(DEFAULTS['next_button_loc'])
-        self.ax_next = plt.axes(DEFAULTS['prev_button_loc'])
-        self.b_next = Button(self.ax_next, 'Next')
-        self.b_prev = Button(self.ax_prev, 'Prev')
-        self.b_next.on_clicked(self.next_plot)
-        self.b_prev.on_clicked(self.prev_plot)
+        # self.ax_prev = plt.axes(DEFAULTS['next_button_loc'])
+        # self.ax_next = plt.axes(DEFAULTS['prev_button_loc'])
+        # self.b_next = Button(self.ax_next, 'Next')
+        # self.b_prev = Button(self.ax_prev, 'Prev')
+        # self.b_next.on_clicked(self.next_plot)
+        # self.b_prev.on_clicked(self.prev_plot)
 
         try :
             matplotlib.rcParams['keymap.back'].remove('left')
@@ -131,7 +134,7 @@ class PlotLooper3 :
             pass
         self.fig.canvas.mpl_connect("key_press_event", self.on_key_press)
 
-        self.fig.add_subplot(1,1,1)
-        interactive = True
-        if not interactive :
+        # self.fig.add_subplot(1,1,1)
+        ipython_interactive = True
+        if not ipython_interactive :
             plt.show()
