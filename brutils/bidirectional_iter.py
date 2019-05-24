@@ -1,49 +1,48 @@
 
 
+class BiIterIndex :
+    def __init__(self, end, start=0) :
+        ## start_with -1 so that first call to next returns 0
+        self.cur = start - 1
+        self.end = end
 
-class BidirectionalIter :
+    def next(self, direction=1) :
+        self.cur = (self.cur + direction) % self.end
+        return self.cur
 
+
+
+class BiIterF :
+    """ F -> using "functions" len/[]"""
     def __init__(self, data: list, start_index=0) :
         """
-            | data must be able to
-            | len(data)
-            | data[index: int]
+        | data must be able to
+        | len(data)
+        | data[index: int]
 
-            direction of first call should b 1
+        | direction of first call should be 1
         """
         self.data = data
-        self.cur_index = start_index - 1
-        self.max = len(data)
-
+        self.index_iter = BiIterIndex(len(self.data), start=start_index)
 
     def next(self, direction=1) :
         """ direction = +/-1 """
-        self.cur_index = (self.cur_index + direction) % self.max
-        return self.data[cur_index]
+        #self.cur_index = (self.cur_index + direction) % self.max
+        return self.data[self.index_iter.next(direction)]
 
 
 
-class BiIter2 :
+class BiIterM :
+    """ M -> using methods get_max() and iget()"""
     def __init__(self, data, start_index=0) :
         """ data must have functions get_max() and iget(index: int) """
         self.data = data
-        self.cur_index = start_index - 1
-        self.max = data.get_max()
-
+        self.index_iter = BiIterIndex(self.data.get_max(), start=start_index)
 
     def next(self, direction=1) :
         """ direction = +/-1 """
-        self.cur_index = (self.cur_index + direction) % self.max
-        return self.data.iget(self.cur_index)
+        return self.data.iget(self.index_iter.next(direction))
 
-class BiIterNum :
-    def __init__(self, end, start_with=0) :
-        self.cur = start_with
-        self.end = end
-
-    def next(self, direct) :
-        self.cur = (self.cur + direct) % self.end
-        return self.cur
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -59,7 +58,7 @@ class PlotLooper3 :
         # self.data_group_iter = BidirectionalIter(data_groups)
 
         # if data_groups has get_max() and iget()
-        self.data_group_iter = BiIter2(data_groups)
+        self.data_group_iter = BiIterM(data_groups)
 
         self.some_condition_func = some_condition_func
         self.title = title
