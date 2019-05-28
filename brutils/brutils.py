@@ -230,66 +230,7 @@ def process_pm_table(pm_table) :
 
     return table_type, well_dict
 
-## <arrs_manip>
-def is_rec(arrs) :
-    """
-        | checks whether 2D list ``arrs`` is a rectangle -
-        | checks that all inner arrays are the same length
-        | returns a boolean
 
-    """
-    length = len(arrs[0])
-    for arr in arrs :
-        if len(arr) != length :
-            return False
-    return True
-
-def is_rec_col_dict(col_dict) :
-    """
-        | checks whether 2D list ``arrs`` is a rectangle -
-        | checks that all inner arrays are the same length
-        | returns a boolean
-
-    """
-    length = len(one_value(col_dict))
-    for col in col_dict.values() :
-        if len(col) != length :
-            return False
-    return True
-
-def make_rec(arrs, blank=None) :
-    """
-        | takes a 2D list ``arrs`` and makes sure it's a rectangle -
-        | makes sures all inner lists are the same length
-
-        | changes original ``arrs``
-        | ``blank`` = value added to end of inner arrays if not long enough
-
-    """
-    if not is_rec(arrs) :
-        longest = 0
-        for arr in arrs :
-            if len(arr) > longest :
-                longest = len(arr)
-
-        for arr in arrs :
-            while(len(arr) < longest) :
-                arr.append(blank)
-
-def rotate(arrs, blank=None) :
-    """
-        | takes a 2D list ``arrs`` and switches the inner and outer arrays
-        | i.e. rows_to_cols or cols_to_rows
-
-        makes ``arrs`` a rectangle using make_rec - which changes oringinal ``arrs``)
-
-        blank is used in make_rec
-    """
-    make_rec(arrs,blank=blank)
-
-    rotated_arrs = [[arr[i] for arr in arrs] for i in range(len(arrs[0]))]
-    return rotated_arrs
-## </arrs_manip>
 
 
 
