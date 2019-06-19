@@ -87,6 +87,7 @@ class PlotLooper :
             self.ax_prev = plt.axes(DEFAULTS['next_button_loc'])
             self.ax_next = plt.axes(DEFAULTS['prev_button_loc'])
             self.b_next = Button(self.ax_next, 'Next')
+
             self.b_prev = Button(self.ax_prev, 'Prev')
             self.b_next.on_clicked(self.next_plot)
             self.b_prev.on_clicked(self.prev_plot)

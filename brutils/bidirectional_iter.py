@@ -5,7 +5,7 @@ import abc
 
 class BiIterIndex :
     def __init__(self, end, start=0) :
-        ## start_with - 1 so that first call to next returns 0
+        ## start_with - 1 so that first call to next(+1) returns start
         self.cur = start - 1
         self.end = end
 
@@ -49,7 +49,7 @@ class BiIterM :
 
 class BiIterB_MixIn(metaclass=abc.ABCMeta) :
     """ B -> using builtins `len` and `[]`"""
-    def __init__(self, data: list, start_index=0) :
+    def __init__(self, start_index=0) :
         """
         | data must be able to
         | len(data)
@@ -64,11 +64,19 @@ class BiIterB_MixIn(metaclass=abc.ABCMeta) :
         """ direction = +/-1 """
         return self[self.index_iter.next(direction)]
 
+    @abc.abstractmethod
+    def __len__(self) :
+        pass
+
+    @abc.abstractmethod
+    def __getitem__(self, index) :
+        pass
+
 
 
 class BiIterM_MixIn(metaclass=abc.ABCMeta) :
     """ M -> using methods `get_max()` and `iget()`"""
-    def __init__(self, data, start_index=0) :
+    def __init__(self, start_index=0) :
         """ data must have functions get_max() and iget(index: int) """
         self.index_iter = BiIterIndex(self.get_max(), start=start_index)
 
@@ -89,4 +97,10 @@ class BiIterM_MixIn(metaclass=abc.ABCMeta) :
         """
         should return the element/object at that index
         """
+        pass
+
+
+class BiIter(metaclass=abc.ABCMeta) :
+    @abc.abstractmethod
+    def next(self, direction=1) :
         pass

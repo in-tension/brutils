@@ -18,24 +18,29 @@ rec(rectangle) -> the length of all inner arrs is the same
 import csv
 
 
-from .brutils import one_value, tuple_to_str
+import numpy as np
+
+from .misc import one_value, tuple_to_str
 
 
-__all__ = [
-    'is_rec',
-    'is_rec_arr_dict',
-    'make_rec',
-    'rotate',
-    'arr_dict_to_arrs',
-    'rotate_arr_dict',
+# from .brutils import one_value, tuple_to_str
 
-    'csv_to_rows',
-    'csv_to_col_dict',
-    'rows_to_csv',
-    'col_dict_to_csv',
-    'col_dict_to_sheet',
-    'col_dict_to_xlsx'
-]
+
+# __all__ = [
+#     'is_rec',
+#     'is_rec_arr_dict',
+#     'make_rec',
+#     'rotate',
+#     'arr_dict_to_arrs',
+#     'rotate_arr_dict',
+#
+#     'csv_to_rows',
+#     'csv_to_col_dict',
+#     'rows_to_csv',
+#     'col_dict_to_csv',
+#     'col_dict_to_sheet',
+#     'col_dict_to_xlsx'
+# ]
 
 
 ### <arrs manipulation> ###
@@ -125,6 +130,68 @@ def rotate_arr_dict(arr_dict) :
 ### </arrs manipulation> ###
 
 
+def arr_np_nan(arr, blank=None):
+    """ replaces blank values in arr with np.nan """
+    for i in range(len(arr)):
+        if arr[i] == blank:
+            arr[i] = np.nan
+
+
+def col_dict_np_nan(col_dict, blank=None):
+    """
+    deprecated - use pandas
+    replaces blank values in cols of col_dict with np.nan
+    """
+    for col_name in col_dict:
+        arr_np_nan(col_dict[col_name], blank=blank)
+
+
+def col_dict_row_nanmed(col_dict):
+    """
+        deprecated - use pandas
+        .. note: asumes col_dict is rec
+    """
+    col_dict_np_nan(col_dict)
+    for col_name in col_dict:
+        h = len(col_dict[col_name])
+        break
+
+    med_col = []
+    for r in range(h):
+        temp_row = []
+        for col_name in col_dict:
+            temp_row.append(col_dict[col_name][r])
+        med = np.nanmedian(temp_row)
+        med_col.append(med)
+
+    return med_col
+
+
+def col_dict_row_nanmean(col_dict):
+    """
+        deprecated - use pandas
+        .. note: asumes col_dict is rec
+    """
+
+    col_dict_np_nan(col_dict)
+
+    for col_name in col_dict:
+        h = len(col_dict[col_name])
+        break
+
+    mean_col = []
+    for r in range(h):
+        temp_row = []
+        for col_name in col_dict:
+            temp_row.append(col_dict[col_name][r])
+        mean = np.nanmean(temp_row)
+        mean_col.append(mean)
+
+    return mean_col
+
+
+
+
 ### <arrs fio> ###
 
 def csv_to_rows(csv_path) :
@@ -205,6 +272,15 @@ def col_dict_to_xlsx(out_file, arr_dict, arr_num=0) :
     with xlsxwriter.Workbook(out_file, {'nan_inf_to_errors': True}) as w_book :
         w_sheet = w_book.add_worksheet('')
         col_dict_to_sheet(arr_dict, w_sheet)
+
+
+
+
+
+
+
+
+
 
 
 ### <arrs fio> ###

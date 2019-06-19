@@ -2,7 +2,7 @@
 Amelia **Br**\ own **Util**\ ities
 
 """
-# brutils -> (amelia) brown utilities
+# brutils -> (amelia) BRown UTILities
 
 import os
 import csv
@@ -16,11 +16,15 @@ import types
 
 import numpy as np
 import xlsxwriter
+from pprint import pprint
+from termcolor import colored
 
-__all__ = ['get_attrs','pprint_attrs']
+
+# __all__ = ['get_attrs','pprint_attrs']
 
 
-from .brutils_dep import  *
+# from .brutils_dep import  *
+
 
 
 def reload(package) :
@@ -30,6 +34,8 @@ def reload(package) :
         print(key)
     imp.reload(package)
 
+
+
 def one_key(some_dict) :
     for key in some_dict :
         return key
@@ -38,7 +44,9 @@ def one_value(some_dict) :
     for value in some_dict.values() :
         return value
 
-from termcolor import colored
+
+
+
 def create_df_dists(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None) :
     """ adds column to original df """
     ct = dtic('create_df_dists')
@@ -60,22 +68,6 @@ def create_df_dists(df, x_col_name, y_col_name, dist_col_name="Distance", index_
     print(df[dist_col_name])
 
     dtoc(ct)
-
-def loc_print() :
-    # print(locals().keys())
-    # print(globals().keys())
-    import inspect
-    # print(inspect.getframeinfo(inspect.currentframe().f_back).function)
-    cur_frame = inspect.currentframe()
-    prev_frame = cur_frame.f_back
-    prev_frame_info = inspect.getframeinfo(prev_frame).function
-    print(inspect.getframeinfo(cur_frame).function)
-    print(prev_frame_info)
-    print(__name__)
-    print(__package__)
-
-# global count
-# count = 0
 
 def create_df_dists2(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None) :
     """ adds column to original df """
@@ -124,6 +116,7 @@ def distance(p0, p1):
     | calculates distance between p0 and p1
     """
     return math.sqrt((p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2)
+
 
 def read_plate_map(pm_file_path) :
     """
@@ -232,16 +225,30 @@ def process_pm_table(pm_table) :
 
 
 
+def loc_print() :
+    # print(locals().keys())
+    # print(globals().keys())
+    import inspect
+    # print(inspect.getframeinfo(inspect.currentframe().f_back).function)
+    cur_frame = inspect.currentframe()
+    prev_frame = cur_frame.f_back
+    prev_frame_info = inspect.getframeinfo(prev_frame).function
+    print(inspect.getframeinfo(cur_frame).function)
+    print(prev_frame_info)
+    print(__name__)
+    print(__package__)
 
 
 
 
-def ensure_dir(dir) :
+def ensure_dir(path) :
     """
         if dir doensn't exist, creates it
     """
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
 
 def arr_cast(arr, cast_type) :
     """
@@ -271,8 +278,16 @@ def arr_cast_spec(arr, cast_type) :
             new_arr.append(None)
     return new_arr
 
+
+
+
+
 def avg(arr) :
     """
+        .. warning:: deprecated
+
+        uses statistics.mean() instead
+
         | returns the average of a given array
         | skips None values
     """
@@ -289,6 +304,7 @@ def avg(arr) :
 
 def mov_avg(arr, above_below=5) :
     """
+        should also be able to use pandas.DataFrame.rolling(window)
     """
     new_arr = []
     for i in range(len(arr)) :
@@ -302,69 +318,13 @@ def mov_avg(arr, above_below=5) :
         new_arr.append(new_element)
     return new_arr
 
-def arr_np_nan(arr, blank=None) :
-    """ replaces blank values in arr with np.nan """
-    for i in range(len(arr)) :
-        if arr[i] == blank :
-            arr[i] = np.nan
-
-
-def col_dict_np_nan(col_dict, blank=None) :
-    """
-    deprecated - use pandas
-    replaces blank values in cols of col_dict with np.nan
-    """
-    for col_name in col_dict :
-        arr_np_nan(col_dict[col_name],blank=blank)
-
-def col_dict_row_nanmed(col_dict) :
-    """
-        deprecated - use pandas
-        .. note: asumes col_dict is rec
-    """
-    col_dict_np_nan(col_dict)
-    for col_name in col_dict :
-        h = len(col_dict[col_name])
-        break
-
-    med_col = []
-    for r in range(h) :
-        temp_row = []
-        for col_name in col_dict :
-            temp_row.append(col_dict[col_name][r])
-        med = np.nanmedian(temp_row)
-        med_col.append(med)
 
 
 
-    return med_col
-
-def col_dict_row_nanmean(col_dict) :
-    """
-        deprecated - use pandas
-        .. note: asumes col_dict is rec
-    """
-
-    col_dict_np_nan(col_dict)
-
-    for col_name in col_dict :
-        h = len(col_dict[col_name])
-        break
-
-    mean_col = []
-    for r in range(h) :
-        temp_row = []
-        for col_name in col_dict :
-            temp_row.append(col_dict[col_name][r])
-        mean = np.nanmean(temp_row)
-        mean_col.append(mean)
 
 
 
-    return mean_col
 
-
-from pprint import pprint
 #
 # def br_pprint(obj) :
 #     """
@@ -380,97 +340,6 @@ from pprint import pprint
 
 
 
-def attr_keys(obj) :
-    return obj.__dict__.keys()
-
-def attr_values(obj) :
-    return obj.__dict__.values()
-
-def attr_items(obj) :
-    return obj.__dict__.items()
-
-def get_attrs(obj,show_hidden=False) :
-    """
-    obj -> package, class, variable,
-        really anything with __dict__
-    returns a list
-    """
-    #return obj.__dict__.keys()
-    if show_hidden :
-        return list(obj.__dict__.keys())
-    else :
-        attrs = []
-        for k in obj.__dict__.keys() :
-            if not k.startswith('_') :
-                attrs.append(k)
-        return attrs
-
-def get_attr_items(obj, show_hidden=False) :
-    if show_hidden :
-        return obj.__dict__.items()
-    else :
-        attr_items = {}
-        for k, v in obj.__dict__.items() :
-            if not k.startswith('_') :
-                attr_items[k] = v
-        return attr_items
-
-
-def pprint_attrs(obj, show_hidden=False) :
-    # for key in getattrs(obj) :
-    #     print(key)
-    pprint(get_attrs(obj, show_hidden=show_hidden))
-
-
-def pprint_attr_types(obj, show_hidden=False) :
-
-    if show_hidden :
-        for k, v in  obj.__dict__.keys() :
-            print('{:20} : {}'.format(k,str(type(v))))
-    else :
-        for k, v in  obj.__dict__.keys() :
-            if not k.startswith('_') :
-                print('{:20} : {}'.format(k,str(type(v))))
-
-
-
-def get_funcs_clsmethods(obj, show_hidden=False) :
-    """take """
-    if type(obj) == type :
-        obj_cls = obj
-    else :
-        obj_cls = type(obj)
-
-    funcs = []
-    clsmethods = []
-    if show_hidden :
-        for key, value in obj_cls.__dict__.items() :
-            if type(value) == types.FunctionType:
-                funcs.append(key)
-            elif type(value) == types.MethodType:
-                clsmethods.append(key)
-
-    else :
-        for key, value in obj_cls.__dict__.items() :
-            if key.startswith('_') :
-                continue
-            if type(value) == types.FunctionType  :
-                funcs.append(key)
-            elif type(value) == types.MethodType :
-                clsmethods.append(key)
-
-    return funcs, clsmethods
-
-# def get_all_funcs(obj, show_hidden=False) :
-
-
-def get_funcs(obj, show_hidden=False) :
-    funcs, clsmethods = get_funcs_clsmethods(obj, show_hidden=show_hidden)
-    return funcs
-
-def get_clsmethods(obj, show_hidden=False) :
-    funcs, clsmethods = get_funcs_clsmethods(obj, show_hidden=show_hidden)
-    return clsmethods
 
 
 
@@ -516,6 +385,8 @@ def pattern_in_list(some_list, pattern) :
     else :
         return -1
 
+
+
 def tuple_to_str(tup, delim='_') :
     """
     """
@@ -524,64 +395,5 @@ def tuple_to_str(tup, delim='_') :
         temp.append(str(term))
     return delim.join(temp)
 
-## <tic_toc>
-def tic() :
-    """
-        | tic-toc used to measure elapsed time (usage similar to matlab tic-toc)
-
-        | basic tic, returns current time
-        | when results of tic are given to a later toc, toc returns the elapsed time
-
-    """
-    return time.time()
-
-def toc(start_time) :
-    """
-        | tic-toc used to measure elapsed time (usage similar to matlab tic-toc)
-
-        | *returns* time in seconds since given ``tic``
-
-        | start_time -> ``tic``
-    """
-    end_time = time.time()
-    return (end_time-start_time)
-
-## ptoc -> print_toc
-def ptoc(start_time, descrip=None) :
-    """
-        *prints* time in seconds since given ``tic``
-
-        | start_time -> ``tic``
-    """
-    elapsed_time = toc(start_time)
-    if descrip == None :
-        print('time elapsed {} seconds'.format(elapsed_time))
-    else :
-        #print('{} seconds'.format(descrip, elapsed_time))
-        dtoc([start_time])
-
-## dtic -> described_tic
-def dtic(descrip) :
-    """
-        | like tic but takes a description of what is being timed
-        | ``dtoc`` prints given description with the elapsed time
-
-        | useful to identify what different times represent in output
-    """
-    return [time.time(),descrip]
-
-## dtoc -> described_toc
-def dtoc(descrip_n_time) :
-    """
-        prints elapsed time since given ``dtic``
-
-        | descrip_n_time -> ``dtoc`` -> [start_time, descrip]
-    """
-    elapsed_time = time.time() - descrip_n_time[0]
-    time_str = str(datetime.timedelta(seconds=elapsed_time))
-    print('{} : {}'.format(descrip_n_time[1], int(elapsed_time)))
-
-    # print('{} : {:.2f} seconds'.format(descrip_n_time[1], elapsed_time))
-## </tic_toc>
 
 
