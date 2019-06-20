@@ -642,5 +642,3 @@ def dtoc(descrip_n_time) :
 
     # print('{} : {:.2f} seconds'.format(descrip_n_time[1], elapsed_time))
 ## </tic_toc>
-
-
