@@ -55,6 +55,19 @@ def pprint_attr_types(obj, show_hidden=False) :
                 print('{:20} : {}'.format(k,str(type(v))))
 
 
+def print_any_class(obj) :
+    obj_attrs = get_attr_items(obj)
+    for k, v in obj_attrs :
+        print('{:20} : {}'.format(k,v))
+
+def print_any_class_str(obj) :
+    obj_attrs = get_attr_items(obj)
+    obj_str = ''
+    for k, v in obj_attrs :
+        obj_str += '{:20} : {}\n'.format(k,v)
+    return obj_str
+
+
 
 def get_funcs_clsmethods(obj, show_hidden=False) :
     """take """

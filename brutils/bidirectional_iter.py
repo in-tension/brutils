@@ -64,6 +64,7 @@ class BiIterB_MixIn(metaclass=abc.ABCMeta) :
         """ direction = +/-1 """
         return self[self.index_iter.next(direction)]
 
+
     @abc.abstractmethod
     def __len__(self) :
         pass

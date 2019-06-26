@@ -1,4 +1,7 @@
 ## <tic_toc>
+import time
+import datetime
+
 def tic() :
     """
         | tic-toc used to measure elapsed time (usage similar to matlab tic-toc)
@@ -57,3 +60,17 @@ def dtoc(descrip_n_time) :
 
     # print('{} : {:.2f} seconds'.format(descrip_n_time[1], elapsed_time))
 ## </tic_toc>
+
+
+def loc_print() :
+    # print(locals().keys())
+    # print(globals().keys())
+    import inspect
+    # print(inspect.getframeinfo(inspect.currentframe().f_back).function)
+    cur_frame = inspect.currentframe()
+    prev_frame = cur_frame.f_back
+    prev_frame_info = inspect.getframeinfo(prev_frame).function
+    print(inspect.getframeinfo(cur_frame).function)
+    print(prev_frame_info)
+    print(__name__)
+    print(__package__)

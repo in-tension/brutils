@@ -4,27 +4,16 @@ Amelia **Br**\ own **Util**\ ities
 """
 # brutils -> (amelia) BRown UTILities
 
+
+
+
 import os
-import csv
-import time
-import pathlib
 import math
-import sys
-import datetime
 import importlib as imp
-import types
-
-import numpy as np
-import xlsxwriter
-from pprint import pprint
-from termcolor import colored
 
 
-# __all__ = ['get_attrs','pprint_attrs']
-
-
-# from .brutils_dep import  *
-
+from .arrs import csv_to_rows, rotate
+from .tic_toc import dtic, dtoc
 
 
 def reload(package) :
@@ -44,70 +33,6 @@ def one_value(some_dict) :
     for value in some_dict.values() :
         return value
 
-
-
-
-def create_df_dists(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None) :
-    """ adds column to original df """
-    ct = dtic('create_df_dists')
-    if dist_col_name in df.columns :
-        pass
-    else :
-        df[dist_col_name]=np.nan
-
-
-    dt = dtic('create_df_dists for loop')
-    for r in range(0,len(df)-1) :
-
-        one = df.iloc[r]
-        two = df.iloc[r+1]
-
-        if one[index_col] == two[index_col] - 1 :
-            df[dist_col_name].iloc[r] = distance([one[x_col_name],one[y_col_name]],[two[x_col_name],two[y_col_name]])
-    dtoc(dt)
-    print(df[dist_col_name])
-
-    dtoc(ct)
-
-def create_df_dists2(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None) :
-    """ adds column to original df """
-    # global count
-    # count+=1
-
-
-
-    # if count == 1 :
-    #     print(df[[index_col,x_col_name,y_col_name,dist_col_name]])
-
-    if dist_col_name in df.columns:
-        pass
-    else:
-        df[dist_col_name] = np.nan
-
-    c = 0
-    ct = 0
-    cf = 0
-
-
-
-    for n in range(len(df.index)-1) :
-        c+=1
-        r = df.index[n]
-        r2 = df.index[n+1]
-
-        if df.loc[r, index_col] == df.loc[r2, index_col] - 1 :
-            ct+=1
-
-            df.loc[r, dist_col_name] = (distance([df.loc[r, x_col_name], df.loc[r, y_col_name]], [df.loc[r2, x_col_name]    , df.loc[r2, y_col_name]]))
-        else :
-            cf+=1
-
-
-    #
-    # if count == 1:
-    #     print(df[[index_col, x_col_name, y_col_name, dist_col_name]])
-
-    return df
 
 
 def distance(p0, p1):
@@ -225,136 +150,12 @@ def process_pm_table(pm_table) :
 
 
 
-def loc_print() :
-    # print(locals().keys())
-    # print(globals().keys())
-    import inspect
-    # print(inspect.getframeinfo(inspect.currentframe().f_back).function)
-    cur_frame = inspect.currentframe()
-    prev_frame = cur_frame.f_back
-    prev_frame_info = inspect.getframeinfo(prev_frame).function
-    print(inspect.getframeinfo(cur_frame).function)
-    print(prev_frame_info)
-    print(__name__)
-    print(__package__)
-
-
-
-
 def ensure_dir(path) :
     """
         if dir doensn't exist, creates it
     """
     if not os.path.exists(path):
         os.makedirs(path)
-
-
-
-def arr_cast(arr, cast_type) :
-    """
-        cast_type = str, float, int...
-    """
-    new_arr = []
-    for element in arr :
-        try :
-            new_element = cast_type(element)
-            new_arr.append(new_element)
-        except :
-            new_arr.append(element)
-    return new_arr
-
-## arr_cast assumed from str
-## where '' is set to None
-def arr_cast_spec(arr, cast_type) :
-    """
-        cast_type = float, int...
-    """
-    new_arr = []
-    for element in arr :
-        try :
-            new_element = cast_type(element)
-            new_arr.append(new_element)
-        except :
-            new_arr.append(None)
-    return new_arr
-
-
-
-
-
-def avg(arr) :
-    """
-        .. warning:: deprecated
-
-        uses statistics.mean() instead
-
-        | returns the average of a given array
-        | skips None values
-    """
-    sum = 0.0
-    count = 0
-    for element in arr :
-        if element != None :
-            sum += element
-            count += 1
-
-    if count == 0 :
-        return None
-    return sum/count
-
-def mov_avg(arr, above_below=5) :
-    """
-        should also be able to use pandas.DataFrame.rolling(window)
-    """
-    new_arr = []
-    for i in range(len(arr)) :
-
-        below = i - above_below
-        if below < 0 : below = 0
-        above = i + above_below
-        if above >= len(arr) : above = len(arr) - 1
-
-        new_element = avg(arr[below:above])
-        new_arr.append(new_element)
-    return new_arr
-
-
-
-
-
-
-
-
-#
-# def br_pprint(obj) :
-#     """
-#     all interables shoulb be printed with newlines -> including dict.keys() and dict.items()
-#     """
-#     try :
-#         iterator = iter(obj)
-#     except TypeError :
-#         # not iterable
-#         pprint(obj)
-#     else :
-#         pprint(list(obj))
-
-
-
-
-
-
-def print_any_class(obj) :
-    obj_attrs = get_attr_items(obj)
-    for k, v in obj_attrs :
-        print('{:20} : {}'.format(k,v))
-
-def print_any_class_str(obj) :
-    obj_attrs = get_attr_items(obj)
-    obj_str = ''
-    for k, v in obj_attrs :
-        obj_str += '{:20} : {}\n'.format(k,v)
-    return obj_str
-
 
 
 
@@ -395,62 +196,68 @@ def tuple_to_str(tup, delim='_') :
         temp.append(str(term))
     return delim.join(temp)
 
-## <tic_toc>
-def tic() :
-    """
-        | tic-toc used to measure elapsed time (usage similar to matlab tic-toc)
 
-        | basic tic, returns current time
-        | when results of tic are given to a later toc, toc returns the elapsed time
 
-    """
-    return time.time()
+import platform
+if platform.system() != 'Java' :
+    import numpy as np
 
-def toc(start_time) :
-    """
-        | tic-toc used to measure elapsed time (usage similar to matlab tic-toc)
 
-        | *returns* time in seconds since given ``tic``
+    def create_df_dists(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None):
+        """ adds column to original df """
+        ct = dtic('create_df_dists')
+        if dist_col_name in df.columns:
+            pass
+        else:
+            df[dist_col_name] = np.nan
 
-        | start_time -> ``tic``
-    """
-    end_time = time.time()
-    return (end_time-start_time)
+        dt = dtic('create_df_dists for loop')
+        for r in range(0, len(df) - 1):
 
-## ptoc -> print_toc
-def ptoc(start_time, descrip=None) :
-    """
-        *prints* time in seconds since given ``tic``
+            one = df.iloc[r]
+            two = df.iloc[r + 1]
 
-        | start_time -> ``tic``
-    """
-    elapsed_time = toc(start_time)
-    if descrip == None :
-        print('time elapsed {} seconds'.format(elapsed_time))
-    else :
-        #print('{} seconds'.format(descrip, elapsed_time))
-        dtoc([start_time])
+            if one[index_col] == two[index_col] - 1:
+                df[dist_col_name].iloc[r] = distance([one[x_col_name], one[y_col_name]],
+                                                     [two[x_col_name], two[y_col_name]])
+        dtoc(dt)
+        print(df[dist_col_name])
 
-## dtic -> described_tic
-def dtic(descrip) :
-    """
-        | like tic but takes a description of what is being timed
-        | ``dtoc`` prints given description with the elapsed time
+        dtoc(ct)
 
-        | useful to identify what different times represent in output
-    """
-    return [time.time(),descrip]
 
-## dtoc -> described_toc
-def dtoc(descrip_n_time) :
-    """
-        prints elapsed time since given ``dtic``
+    def create_df_dists2(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None):
+        """ adds column to original df """
+        # global count
+        # count+=1
 
-        | descrip_n_time -> ``dtoc`` -> [start_time, descrip]
-    """
-    elapsed_time = time.time() - descrip_n_time[0]
-    time_str = str(datetime.timedelta(seconds=elapsed_time))
-    print('{} : {}'.format(descrip_n_time[1], int(elapsed_time)))
+        # if count == 1 :
+        #     print(df[[index_col,x_col_name,y_col_name,dist_col_name]])
 
-    # print('{} : {:.2f} seconds'.format(descrip_n_time[1], elapsed_time))
-## </tic_toc>
+        if dist_col_name in df.columns:
+            pass
+        else:
+            df[dist_col_name] = np.nan
+
+        c = 0
+        ct = 0
+        cf = 0
+
+        for n in range(len(df.index) - 1):
+            c += 1
+            r = df.index[n]
+            r2 = df.index[n + 1]
+
+            if df.loc[r, index_col] == df.loc[r2, index_col] - 1:
+                ct += 1
+
+                df.loc[r, dist_col_name] = (distance([df.loc[r, x_col_name], df.loc[r, y_col_name]],
+                                                     [df.loc[r2, x_col_name], df.loc[r2, y_col_name]]))
+            else:
+                cf += 1
+
+        #
+        # if count == 1:
+        #     print(df[[index_col, x_col_name, y_col_name, dist_col_name]])
+
+        return df
