@@ -9,7 +9,14 @@ Package brutils
 .. toctree::
    :maxdepth: 2
 
-   brutils
+   arrs
+   tic_toc
+   obj_attrs
+   bidirectional_iter
+   misc
+
+   plot_looper
+
 
 
 

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.widgets import Button
 
-
+## todo: use bi-iters from bidirection_iter.py
 class PlotLooper :
 
     def __init__(self, data_groups, subplot_layout=(1,1),some_condition_func=None, title=None, plot_func=None) :
@@ -35,7 +35,7 @@ class PlotLooper :
         # ax.cla()
         for ax in self.axes :
             ax.clear()
-        if self.plot_func == None :
+        if self.plot_func is None :
             # print("plot_func = None")
             self.cur_group.plot(self.axes)
         else :
@@ -78,7 +78,7 @@ class PlotLooper :
 
         self.fig = plt.figure(figsize=DEFAULTS['figsize'])
 
-        if self.title != None:
+        if self.title is not None:
             self.fig.suptitle(self.title)
         self.fig.show()
 
@@ -128,7 +128,7 @@ class BiIterIndex :
 
 class BiIterF :
     """ F -> using "functions" len/[]"""
-    def __init__(self, data: list, start_index=0) :
+    def __init__(self, data, start_index=0) :
         """
         | data must be able to
         | len(data)

@@ -31,7 +31,7 @@ def ptoc(start_time, descrip=None) :
         | start_time -> ``tic``
     """
     elapsed_time = toc(start_time)
-    if descrip == None :
+    if descrip is None :
         print('time elapsed {} seconds'.format(elapsed_time))
     else :
         #print('{} seconds'.format(descrip, elapsed_time))

@@ -1,26 +1,14 @@
-"""
-Author: Amelia Brown
-today (who knows which day): 5/24/17
 
-arr(array) -> a list -> usually represents a colulmn or row
-arrs -> a 2D list -> usually represents columns or rows
-
-row/col(column) -> same as an arr, has no technical distinction but sometimes used as a convenience
-rows/cols -> same as an arrw, has no technical distinction but sometimes used as a convenience
-
-arr_dict -> dict whos values are each an arr(/row/dict)
-
-rec(rectangle) -> the length of all inner arrs is the same
-
-"""
 ## todo has not really been tested since some refactoring and renaming
 
 import csv
 
 
-
-from .misc import one_value, tuple_to_str
-
+import sys
+if sys.version_info < (3,0) :
+    PY_2 = True
+else :
+    PY_2 = False
 
 
 
@@ -49,6 +37,7 @@ def is_rec_arr_dict(arr_dict) :
         | returns a boolean
 
     """
+    from .misc import one_value
     length = len(one_value(arr_dict))
     for arr in arr_dict.values() :
         if len(arr) != length :
@@ -114,45 +103,74 @@ def rotate_arr_dict(arr_dict) :
 
 
 
+# def out_col_dict()
 
 
 
 
 ### <arrs fio> ###
 
-def csv_to_rows(csv_path) :
+def csv_to_rows(csv_path, cast_type=None) :
     rows = []
     with open(csv_path,'rU') as csv_file :
         csv_reader = csv.reader(csv_file)
         for row in csv_reader :
             rows.append(row)
 
+    if cast_type is not None :
+        rows = arrs_cast_spec(rows, cast_type=cast_type)
+
     return rows
 
 
-def csv_to_col_dict(csv_path) :
+
+
+
+
+def csv_to_col_dict(csv_path, cast_type=str) :
     """
     | reads a csv file and creates a dict of cols
     | assumes first row is col names and that all are unique
     """
     rows = csv_to_rows(csv_path)
-    arrs = rotate(rows)
+    # print(rows)
+    # print('\n\n')
 
-    arr_dict = {}
-    for arr in arrs :
-        arr_dict[arr[0]] = arr[1:]
+    if cast_type is not None :
+        temp = [rows[0]]
+        temp.extend(arrs_cast_spec(rows[1:], cast_type=cast_type))
+        rows = temp
 
-    return arr_dict
+    # print(rows)
+
+    cols = rotate(rows)
+
+
+    col_dict = {}
+    for col in cols :
+        col_dict[col[0]] = col[1:]
+
+    return col_dict
+
 
 
 def rows_to_csv(rows, csv_path) :
     """
         writes a 2D list of rows to a csv
     """
-    with open(csv_path, 'w', newline='') as csv_file :
-        csv_writer = csv.writer(csv_file)
-        for row in rows :
-            csv_writer.writerow(row)
+    if PY_2 :
+        print(rows)
+        with open(csv_path, 'wb') as csv_file :
+            csv_writer = csv.writer(csv_file)
+            for row in rows :
+                csv_writer.writerow(row)
+    else :
+        with open(csv_path, 'w', newline='') as csv_file :
+            csv_writer = csv.writer(csv_file)
+            for row in rows :
+                csv_writer.writerow(row)
+
+
 
 
 def col_dict_to_csv(arr_dict, csv_path) :
@@ -162,13 +180,14 @@ def col_dict_to_csv(arr_dict, csv_path) :
 
     arrs = []
     for arr_key in arr_dict :
-        temp_arr = [arr_key] + arr_dict[arr_key]
+        temp_arr = [arr_key] + list(arr_dict[arr_key])
         arrs.append(temp_arr)
     rows = rotate(arrs)
     rows_to_csv(rows, csv_path)
 
 
 def col_dict_to_sheet(arr_dict, w_sheet, arr_num=0) :
+    from .misc import tuple_to_str
     try :
         import xlsxwriter
     except ModuleNotFoundError as err :
@@ -222,6 +241,17 @@ def arr_cast(arr, cast_type) :
             new_arr.append(element)
     return new_arr
 
+
+def arrs_cast(arrs, cast_type) :
+    arrs2 = []
+    for arr in arrs :
+        temp = arr_cast(arr, cast_type=cast_type)
+        arrs2.append(temp)
+
+    return arrs2
+
+
+
 ## arr_cast assumed from str
 ## where '' is set to None
 def arr_cast_spec(arr, cast_type) :
@@ -230,12 +260,30 @@ def arr_cast_spec(arr, cast_type) :
     """
     new_arr = []
     for element in arr :
-        try :
-            new_element = cast_type(element)
-            new_arr.append(new_element)
-        except :
+        # print(element)
+        if element == '' :
             new_arr.append(None)
+        else :
+            try :
+                new_element = cast_type(element)
+
+                new_arr.append(new_element)
+            except Exception:
+                new_arr.append(element)
+
+        # print(new_arr[-1])
     return new_arr
+
+
+def arrs_cast_spec(arrs, cast_type):
+    arrs2 = []
+    for arr in arrs:
+        # print(arr)
+        temp = arr_cast_spec(arr, cast_type=cast_type)
+        arrs2.append(temp)
+
+    return arrs2
+
 
 
 
@@ -253,13 +301,28 @@ def avg(arr) :
     tot = 0.0
     count = 0
     for element in arr :
-        if element != None :
+        if element is not None :
             tot += element
             count += 1
 
     if count == 0 :
         return None
     return tot/count
+
+
+def normalize(arr) :
+    # for num in arr :
+    avgerage = avg(arr)
+
+    arr2 = []
+    for num in arr :
+        arr2.append(num/average)
+
+    return arr2
+
+
+
+
 
 def mov_avg(arr, above_below=5) :
     """
