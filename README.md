@@ -1,4 +1,5 @@
-Amelia **Br**\ own **Util**\ ities
+Amelia **Br**own **Util**ities
+--------------------------------
 
 A utility package for python that made for my own convenience.
 
