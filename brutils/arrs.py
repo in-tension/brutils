@@ -2,6 +2,7 @@
 ## todo has not really been tested since some refactoring and renaming
 
 import csv
+import statistics
 
 
 import sys
@@ -18,7 +19,7 @@ else :
 
 def is_rec(arrs) :
     """
-        | checks whether 2D list ``arrs`` is a rectangle -
+        | checks whether 2D list :term:`arrs` is a rectangle -
         | checks that all inner arrays are the same length
         | returns a boolean
 
@@ -32,7 +33,7 @@ def is_rec(arrs) :
 
 def is_rec_arr_dict(arr_dict) :
     """
-        | checks whether 2D list ``arrs`` is a rectangle -
+        | checks whether 2D list :term:`arrs` is a rectangle -
         | checks that all inner arrays are the same length
         | returns a boolean
 
@@ -47,10 +48,10 @@ def is_rec_arr_dict(arr_dict) :
 
 def make_rec(arrs, blank=None) :
     """
-        | takes a 2D list ``arrs`` and makes sure it's a rectangle -
+        | takes a 2D list :term:`arrs` and makes sure it's a rectangle -
         | makes sures all inner lists are the same length
 
-        | changes original ``arrs``
+        | changes original :term:`arrs`
         | ``blank`` = value added to end of inner arrays if not long enough
 
     """
@@ -67,10 +68,10 @@ def make_rec(arrs, blank=None) :
 
 def rotate(arrs, blank=None) :
     """
-        | takes a 2D list ``arrs`` and switches the inner and outer arrays
+        | takes a 2D list :term:`arrs` and switches the inner and outer arrays
         | i.e. rows_to_cols or cols_to_rows
 
-        makes ``arrs`` a rectangle using make_rec - which changes oringinal ``arrs``)
+        makes :term:`arrs` a rectangle using make_rec - which changes oringinal :term:`arrs`)
 
         blank is used in make_rec
     """
@@ -92,7 +93,7 @@ def rotate_arr_dict(arr_dict) :
         returns 2D list (arrs/rows)
         not a rotated dict
 
-        arr labels are lost
+        :term:`arr` labels are lost
     """
     cols = arr_dict_to_arrs(arr_dict)
     rows = rotate(cols)
@@ -111,6 +112,8 @@ def rotate_arr_dict(arr_dict) :
 ### <arrs fio> ###
 
 def csv_to_rows(csv_path, cast_type=None) :
+    """
+    """
     rows = []
     with open(csv_path,'rU') as csv_file :
         csv_reader = csv.reader(csv_file)
@@ -230,7 +233,8 @@ def col_dict_to_xlsx(out_file, arr_dict, arr_num=0) :
 
 def arr_cast(arr, cast_type) :
     """
-        cast_type = str, float, int...
+        loops through arr and casts each element to cast_type
+        copies origialnal element if cast fails
     """
     new_arr = []
     for element in arr :
@@ -243,6 +247,10 @@ def arr_cast(arr, cast_type) :
 
 
 def arrs_cast(arrs, cast_type) :
+    """
+        loops through all elements in arrs and casts each to cast_type
+        copies original element if cast fails
+    """
     arrs2 = []
     for arr in arrs :
         temp = arr_cast(arr, cast_type=cast_type)
@@ -256,7 +264,10 @@ def arrs_cast(arrs, cast_type) :
 ## where '' is set to None
 def arr_cast_spec(arr, cast_type) :
     """
-        cast_type = float, int...
+        loops through arr and casts each element to cast_type
+        replaces empty strings ``''`` with None
+        copies original element if cast fails
+
     """
     new_arr = []
     for element in arr :
@@ -276,9 +287,13 @@ def arr_cast_spec(arr, cast_type) :
 
 
 def arrs_cast_spec(arrs, cast_type):
+    """
+        loops through all elements in arrs and casts each to cast_type
+        replaces empty strings ``''`` with None
+        copies original element if cast fails
+    """
     arrs2 = []
     for arr in arrs:
-        # print(arr)
         temp = arr_cast_spec(arr, cast_type=cast_type)
         arrs2.append(temp)
 
@@ -311,8 +326,10 @@ def avg(arr) :
 
 
 def normalize(arr) :
-    # for num in arr :
-    avgerage = avg(arr)
+    """
+        divides each element in arr by average and returns the results
+    """
+    average = statistics.mean(arr)
 
     arr2 = []
     for num in arr :
@@ -347,7 +364,9 @@ if platform.system() != 'Java' :
 
 
     def arr_np_nan(arr, blank=None):
-        """ replaces blank values in arr with np.nan """
+        """
+            replaces blank values in arr with np.nan
+        """
         for i in range(len(arr)):
             if arr[i] == blank:
                 arr[i] = np.nan
@@ -355,8 +374,7 @@ if platform.system() != 'Java' :
 
     def col_dict_np_nan(col_dict, blank=None):
         """
-        deprecated - use pandas
-        replaces blank values in cols of col_dict with np.nan
+            replaces blank values in cols of col_dict with np.nan
         """
         for col_name in col_dict:
             arr_np_nan(col_dict[col_name], blank=blank)
@@ -364,8 +382,10 @@ if platform.system() != 'Java' :
 
     def col_dict_row_nanmed(col_dict):
         """
-            deprecated - use pandas
-            .. note: asumes col_dict is rec
+            assumes col_dict is rec
+
+            pandas can do similar things but the also comes with more overhead
+
         """
         col_dict_np_nan(col_dict)
         for col_name in col_dict:
@@ -385,8 +405,9 @@ if platform.system() != 'Java' :
 
     def col_dict_row_nanmean(col_dict):
         """
-            deprecated - use pandas
-            .. note: asumes col_dict is rec
+            asumes col_dict is rec
+
+            pandas can do similar things but the also comes with more overhead
         """
 
         col_dict_np_nan(col_dict)

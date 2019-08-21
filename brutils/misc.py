@@ -49,6 +49,7 @@ def distance(p0, p1):
 
 def read_plate_map(pm_file_path) :
     """
+
     assumes rows go from B-P, and cols from 2-24
 
     return table_types, well_dicts, condit_dict
@@ -118,12 +119,8 @@ def process_pm_table(pm_table) :
     """
         used by read_plate_map
         | takes pm_table, a table from the plate-map file and
+    """
 
-        :param arg1: Description of `arg1`
-        :type arg1: str
-        :param arg2: Description of `arg2`, defaults to 0
-        :type arg2: int, optional
-            """
     if not len(pm_table) == 16 :
         ### fix this
         print('brutils.proces_pm_table: crap, this shouldnt happen')
@@ -174,9 +171,9 @@ def ensure_dir(path) :
 
 def pattern_in_list(some_list, pattern) :
     """
-    this can't be the right way to do this
-    assumes list does not contain commas
-    only finds first instance
+        this can't be the right way to do this
+        assumes list does not contain commas
+        only finds first instance
     """
     split_char = ','
 
@@ -214,37 +211,7 @@ if platform.system() != 'Java' :
 
     def create_df_dists(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None):
         """
-        Return a new matrix of given shape and type, without initializing entries.
 
-        Parameters
-        ----------
-        shape : int or tuple of int
-            Shape of the empty matrix.
-        dtype : data-type, optional
-            Desired output data-type.
-        order : {'C', 'F'}, optional
-            Whether to store multi-dimensional data in row-major
-            (C-style) or column-major (Fortran-style) order in
-            memory.
-
-        See Also
-        --------
-        empty_like, zeros
-        Notes
-        -----
-        `empty`, unlike `zeros`, does not set the matrix values to zero,
-        and may therefore be marginally faster.  On the other hand, it requires
-        the user to manually set all the values in the array, and should be
-        used with caution.
-        Examples
-        --------
-        >>> import numpy.matlib
-        >>> np.matlib.empty((2, 2))    # filled with random data
-        matrix([[  6.76425276e-320,   9.79033856e-307], # random
-                [  7.39337286e-309,   3.22135945e-309]])
-        >>> np.matlib.empty((2, 2), dtype=int)
-        matrix([[ 6600475,        0], # random
-                [ 6586976, 22740995]])
 
         """
 
@@ -274,14 +241,7 @@ if platform.system() != 'Java' :
 
     def create_df_dists2(df, x_col_name, y_col_name, dist_col_name="Distance", index_col=None):
         """
-        Args:
-            path (str): The path of the file to wrap
-            field_storage (FileStorage): The :class:`FileStorage` instance to wrap
-            temporary (bool): Whether or not to delete the file when the File
-               instance is destructed
 
-        Returns:
-            BufferedFileStorage: A buffered writable file descriptor
 
         """
         # """ adds column to original df """

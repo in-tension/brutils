@@ -13,9 +13,9 @@ def attr_items(obj) :
 
 def get_attrs(obj,show_hidden=False) :
     """
-    obj -> package, class, variable,
-        really anything with __dict__
-    returns a list
+        obj -> package, class, variable,
+            really anything with __dict__
+        returns a list
     """
     #return obj.__dict__.keys()
     if show_hidden :
@@ -70,7 +70,7 @@ def print_any_class_str(obj) :
 
 
 def get_funcs_clsmethods(obj, show_hidden=False) :
-    """take """
+    """ """
     if type(obj) == type :
         obj_cls = obj
     else :

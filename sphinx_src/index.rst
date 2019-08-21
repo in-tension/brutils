@@ -18,6 +18,8 @@ content of all modules are imported with brutils - you do not need to use the mo
 .. toctree::
    :maxdepth: 1
 
+
+
    arrs
    tic_toc
    obj_attrs
@@ -25,6 +27,10 @@ content of all modules are imported with brutils - you do not need to use the mo
    misc
 
    plot_looper
+
+
+
+   glossary
 
 
 
