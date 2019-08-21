@@ -1,5 +1,7 @@
 Amelia \*Br\*own \*Util\*ities
 --------------------------------
+[Documentation](https://brutils.readthedocs.io/en/latest/)
+
 
 A utility package for python that made for my own convenience.
 
