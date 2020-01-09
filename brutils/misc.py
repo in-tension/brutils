@@ -9,8 +9,12 @@ Amelia **Br**\ own **Util**\ ities
 
 
 import os
+import sys
 import math
 import importlib as imp
+from datetime import datetime
+
+from boltons.iterutils import is_collection, is_scalar
 
 
 from .arrs import csv_to_rows, rotate
@@ -18,9 +22,107 @@ from .arrs import csv_to_rows, rotate
 from .tic_toc import dtic, dtoc
 
 
+## <dev>
+
+
+
+def dated_output_dir(root_dir) :
+    folder_name = '_'.join('output', datetime.today().strftime('%y-%m-%d'))
+
+    folder_path = os.path.join(root_dir, folder_name)
+
+def dict_index(some_dict, val) :
+    keys = list(some_dict.keys())
+    values = list(some_dict.values())
+
+    return keys[values.index(val)]
+
+def reverse_dict(some_dict) :
+    new_dict = {}
+    for key, val in some_dict.items() :
+        new_dict[val] = key
+    return new_dict
+
+def str_comp_ci(str1, str2) :
+    """ string compare case insensitive
+    will not always work for special characters"""
+    return str1.lower() == str2.lower()
+
+def dprint(var, var_name) :
+    print('{} = {}'.format(var_name, var))
+
+def range_len(coll) :
+    return range(len(coll))
+
+def type_str(obj) :
+    return type(obj).__name__
+
+
+def is_py2() :
+    return sys.version_info < (3,0)
+
+from collections import Counter
+if is_py2() :
+    from collections import Mapping
+else :
+    from collections.abc import Mapping
+
+
+
+def print_coll_type(obj, indent_cnt=0, str_prefix='') :
+    indent = indent_cnt*'  '
+    if is_scalar(obj) :
+        print('{ind}{obj_type}'.format(ind=indent, obj_type=type_str(obj)))
+    else :
+        if isinstance(obj, Mapping) :
+            brackets = ['{','}']
+        elif is_collection(obj) :
+            brackets = ['[',']']
+
+        if len(obj) == 0 :
+
+            s = '{ind}{str_pref}{obj_type} : {brack[0]}{brack[1]}'
+            print(s.format(ind=indent, str_pref=str_prefix, obj_type=type_str(obj), brack=brackets))
+        else :
+            s = '{ind}{str_pref}{obj_type} : {brack[0]}'
+            print(s.format(ind=indent, str_pref=str_prefix, obj_type=type_str(obj), brack=brackets))
+
+
+            obj_scalar_types = []
+            if isinstance(obj, Mapping) :
+                for item in obj.values() :
+                    if is_scalar(item) :
+                        obj_scalar_types.append(type(item).__name__)
+            else :
+                for item in obj :
+                    if is_scalar(item) :
+                        obj_scalar_types.append(type(item).__name__)
+
+
+            scalar_type_counts = Counter(obj_scalar_types)
+            for scalar_type, cnt in scalar_type_counts.items() :
+                print('{ind}{s_type}: {cnt}'.format(ind=indent+'  ', s_type=scalar_type, cnt=cnt))
+
+            if isinstance(obj, Mapping) :
+                for key, value in obj.items() :
+                    if is_collection(value) :
+                        str_prefix = str(key) + ': '
+                        print_coll_type(value, indent_cnt=indent_cnt+1, str_prefix=str_prefix)
+            else :
+                for value in obj :
+                    if is_collection(value) :
+                        print_coll_type(value, indent_cnt=indent_cnt+1)
+
+            print('{ind}{brack[1]}'.format(ind=indent,brack=brackets))
+
+
+
+
+## </dev>
 
 
 def reload(package) :
+    """ does this work? """
     for key, val in package.__dict__.items():
         if type(val) == type(os) :
             imp.reload(val)

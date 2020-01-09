@@ -2,7 +2,6 @@
 ## todo has not really been tested since some refactoring and renaming
 
 import csv
-import statistics
 
 
 import sys
@@ -162,7 +161,7 @@ def rows_to_csv(rows, csv_path) :
         writes a 2D list of rows to a csv
     """
     if PY_2 :
-        print(rows)
+        #print(rows)
         with open(csv_path, 'wb') as csv_file :
             csv_writer = csv.writer(csv_file)
             for row in rows :
@@ -307,7 +306,6 @@ def arrs_cast_spec(arrs, cast_type):
 def avg(arr) :
     """
         .. warning:: deprecated
-
         uses statistics.mean() instead
 
         | returns the average of a given array
@@ -325,17 +323,19 @@ def avg(arr) :
     return tot/count
 
 
-def normalize(arr) :
-    """
-        divides each element in arr by average and returns the results
-    """
-    average = statistics.mean(arr)
+if not PY_2 :
+    import statistics
+    def normalize(arr) :
+        """
+            divides each element in arr by average and returns the results
+        """
+        average = statistics.mean(arr)
 
-    arr2 = []
-    for num in arr :
-        arr2.append(num/average)
+        arr2 = []
+        for num in arr :
+            arr2.append(num/average)
 
-    return arr2
+        return arr2
 
 
 
