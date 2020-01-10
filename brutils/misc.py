@@ -3,7 +3,7 @@ Amelia **Br**\ own **Util**\ ities
 
 
 """
-# brutils -> (amelia) BRown UTILities
+## brutils -> (amelia) BRown UTILities
 
 
 
@@ -27,9 +27,11 @@ from .tic_toc import dtic, dtoc
 
 
 def dated_output_dir(root_dir) :
-    folder_name = '_'.join('output', datetime.today().strftime('%y-%m-%d'))
+    folder_name = '_'.join(['output', datetime.today().strftime('%y-%m-%d')])
 
     folder_path = os.path.join(root_dir, folder_name)
+    ensure_dir(folder_path)
+    return folder_path
 
 def dict_index(some_dict, val) :
     keys = list(some_dict.keys())
@@ -122,11 +124,13 @@ def print_coll_type(obj, indent_cnt=0, str_prefix='') :
 
 
 def reload(package) :
-    """ does this work? """
+    """ does this work? seems to
+    I don't think it works for fiji tho
+    """
     for key, val in package.__dict__.items():
         if type(val) == type(os) :
             imp.reload(val)
-        print(key)
+        # print(key)
     imp.reload(package)
 
 

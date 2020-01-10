@@ -135,15 +135,27 @@ def csv_to_col_dict(csv_path, cast_type=str) :
     | assumes first row is col names and that all are unique
     """
     rows = csv_to_rows(csv_path)
-    # print(rows)
-    # print('\n\n')
+
+
+    col_dict = rows_to_col_dict(rows, cast_type=cast_type)
+
+
+
+    return col_dict
+
+
+def print_some_of_all_rows(rows, col_cnt=10) :
+    for row in rows :
+        print(row[:col_cnt])
+
+def rows_to_col_dict(rows, cast_type=None) :
 
     if cast_type is not None :
+        ## casts elems of all rows to cast_type except the first row
         temp = [rows[0]]
         temp.extend(arrs_cast_spec(rows[1:], cast_type=cast_type))
         rows = temp
 
-    # print(rows)
 
     cols = rotate(rows)
 
@@ -153,6 +165,7 @@ def csv_to_col_dict(csv_path, cast_type=str) :
         col_dict[col[0]] = col[1:]
 
     return col_dict
+
 
 
 
