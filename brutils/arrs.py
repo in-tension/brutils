@@ -5,13 +5,13 @@ import csv
 
 
 import sys
-if sys.version_info < (3,0) :
-    PY_2 = True
-else :
-    PY_2 = False
+
+IS_PY2 =  sys.version_info < (3,0)
 
 
-
+# def is_py2() :
+#     return sys.version_info < (3,0)
+#
 
 
 ### <arrs manipulation> ###
@@ -173,7 +173,13 @@ def rows_to_csv(rows, csv_path) :
     """
         writes a 2D list of rows to a csv
     """
-    if PY_2 :
+    # print(is_py2())
+    # IS_PY2 = is_py2()
+    # print(type(csv_path) != unicode)
+    # print(unicode)
+    if type(csv_path) != str and type(csv_path) != unicode:
+        raise TypeError('csv_path must be string or unicode not {}.'.format(type(csv_path).__name__))
+    if IS_PY2 :
         #print(rows)
         with open(csv_path, 'wb') as csv_file :
             csv_writer = csv.writer(csv_file)
@@ -336,7 +342,7 @@ def avg(arr) :
     return tot/count
 
 
-if not PY_2 :
+if not IS_PY2 :
     import statistics
     def normalize(arr) :
         """

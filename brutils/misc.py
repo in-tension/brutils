@@ -13,8 +13,12 @@ import sys
 import math
 import importlib as imp
 from datetime import datetime
+# import functools
 
-from boltons.iterutils import is_collection, is_scalar
+
+
+def is_py2() :
+    return sys.version_info < (3,0)
 
 
 from .arrs import csv_to_rows, rotate
@@ -25,13 +29,22 @@ from .tic_toc import dtic, dtoc
 ## <dev>
 
 
-
 def dated_output_dir(root_dir) :
     folder_name = '_'.join(['output', datetime.today().strftime('%y-%m-%d')])
 
     folder_path = os.path.join(root_dir, folder_name)
     ensure_dir(folder_path)
     return folder_path
+
+def dated_file_path(root_dir, file_name) :
+    file_name_parts = file_name.split('.')
+    file_name_txt = file_name_parts[0]
+    file_name_ext = '.'.join(file_name_parts[1:])
+    dated_file_txt = '_'.join([file_name_txt, datetime.today().strftime('%y-%m-%d')])
+    dated_file_name = '.'.join([dated_file_txt, file_name_ext])
+
+    dated_file_path = os.path.join(root_dir, dated_file_name)
+    return dated_file_path
 
 def dict_index(some_dict, val) :
     keys = list(some_dict.keys())
@@ -60,9 +73,6 @@ def type_str(obj) :
     return type(obj).__name__
 
 
-def is_py2() :
-    return sys.version_info < (3,0)
-
 from collections import Counter
 if is_py2() :
     from collections import Mapping
@@ -72,6 +82,8 @@ else :
 
 
 def print_coll_type(obj, indent_cnt=0, str_prefix='') :
+    from boltons.iterutils import is_collection, is_scalar
+
     indent = indent_cnt*'  '
     if is_scalar(obj) :
         print('{ind}{obj_type}'.format(ind=indent, obj_type=type_str(obj)))
@@ -118,9 +130,21 @@ def print_coll_type(obj, indent_cnt=0, str_prefix='') :
             print('{ind}{brack[1]}'.format(ind=indent,brack=brackets))
 
 
+def temp_print(val) :
+    """to distinguish from a normal print call so it's easy to find to remove"""
+    print(val)
 
 
 ## </dev>
+
+
+
+def is_hashable(obj) :
+    try :
+        hash(obj)
+    except TypeError :
+        return False
+    return True
 
 
 def reload(package) :
