@@ -29,6 +29,9 @@ from .tic_toc import dtic, dtoc
 ## <dev>
 
 
+def exception_str(e) :
+    return '{} : {}'.format(type(e).__name__, str(e))
+
 def dated_output_dir(root_dir) :
     folder_name = '_'.join(['output', datetime.today().strftime('%y-%m-%d')])
 

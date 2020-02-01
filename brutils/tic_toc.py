@@ -36,6 +36,7 @@ def ptoc(start_time, descrip=None) :
     else :
         #print('{} seconds'.format(descrip, elapsed_time))
         dtoc([start_time])
+        ## I don't think this is correct
 
 ## dtic -> described_tic
 def dtic(descrip) :

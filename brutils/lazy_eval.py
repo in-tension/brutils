@@ -49,7 +49,7 @@ class LazyEvalException(Exception) :
         if isinstance(func, str) :
             return func + '()'
         else :
-            return '.'.join(func) + '()'
+            return str(func) + '()'
 
 
 def lazy_eval_or_except(func) :
@@ -72,6 +72,7 @@ def lazy_eval_or_except(func) :
                 func(inst)
                 return inst.__dict__[attr_name]
             except RaisingLazyEvalException as rlee :
+                # print('lazy_eval_or_except: caught rlee')
                 try :
                     fname = func.__qualname__
                 except :
@@ -82,6 +83,7 @@ def lazy_eval_or_except(func) :
                 raise lee
 
             except LazyEvalException as lee :
+                # print('lazy_eval_or_except: caught lee')
                 try :
                     fname = func.__qualname__
                     mname = func.__module__
