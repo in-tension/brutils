@@ -20,7 +20,7 @@ class LazyEvalException(Exception) :
 
         self.raising_function = raising_function
         self.message = message
-        self.calling_function = None
+        self.calling_function = raising_function
 
 
     # def __str__(self) :
