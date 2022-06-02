@@ -300,6 +300,33 @@ def ensure_dir(path) :
 
 
 
+def flt_rng(*args):
+    if len(args) == 1:
+        start = 0
+        stop = args[0]
+        step = 1
+
+    elif len(args) == 2:
+        start = args[0]
+        stop = args[1]
+        step = 1
+
+    elif len(args) == 3:
+        start = args[0]
+        stop = args[1]
+        step = args[2]
+    else:
+        raise TypeError('flt_rng only takes up to 3 arguments')
+
+    vals = []
+    i = start
+    while i < stop:
+        vals.append(i)
+        i += step
+
+    return vals
+
+
 
 
 def pattern_in_list(some_list, pattern) :
@@ -334,6 +361,70 @@ def tuple_to_str(tup, delim='_') :
     for term in tup :
         temp.append(str(term))
     return delim.join(temp)
+
+
+class Pnt:
+
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+
+    @property
+    def xy(self):
+        return self.x, self.y
+
+    @xy.setter
+    def xy(self, val):
+        self.x, self.y = val
+
+    def __iter__(self):
+        return iter([self.x, self.y])
+
+
+class Lims:
+
+    def __init__(self,min,max):
+        self._min = min
+        self._max = max
+
+    @property
+    def min(self):
+        return self._min
+
+    @min.setter
+    def min(self, value):
+        if value > self._max:
+            raise TypeError('trying to set {} to min when max is {}, min cannot be set to value larger than max'.format(value, self._max))
+        else:
+            self._min = value
+
+    @property
+    def max(self):
+        return self._max
+
+    @max.setter
+    def max(self, value):
+        if value < self._min:
+            raise TypeError('trying to set {} to max when min is {}, max cannot be set to value smaller than min'.format(value, self._min))
+        else:
+            self._max = value
+
+    @property
+    def min_max(self):
+        return self.min, self.max
+
+    @min_max.setter
+    def min_max(self, value):
+        self.min, self.max = value
+
+    def __iter__(self):
+        return iter([self.min, self.max])
+
+
+
+
+
+
 
 
 
